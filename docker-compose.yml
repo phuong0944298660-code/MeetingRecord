@@ -1,0 +1,62 @@
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: meeting-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: meeting_record
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: meeting-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  # 后端服务
+  backend:
+    build: ./backend
+    container_name: meeting-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/meeting_record?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      MEETING_UPLOAD_PATH: /app/uploads
+    volumes:
+      - ./backend/uploads:/app/uploads
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  # 前端服务
+  frontend:
+    build: ./frontend
+    container_name: meeting-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:
+  redis-data:

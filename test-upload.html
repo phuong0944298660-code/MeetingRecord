@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+        .error { color: red; }
+        .success { color: green; }
+        button { padding: 10px 20px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>文件上传测试</h1>
+
+    <h2>1. 测试后端连接</h2>
+    <button onclick="testBackend()">测试 /api/meeting/list</button>
+    <div id="testResult"></div>
+
+    <h2>2. 测试文件上传</h2>
+    <input type="file" id="fileInput" accept="audio/*">
+    <button onclick="uploadFile()">上传</button>
+    <div id="uploadResult"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+
+        async function testBackend() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = '测试连接中...';
+
+            try {
+                const response = await fetch(`${API_BASE}/meeting/list`);
+                const data = await response.json();
+                resultDiv.innerHTML = `<div class="result success">连接成功!<br>响应: ${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">连接失败: ${error.message}<br>请确保后端服务已启动 (java -jar backend/target/meeting-record-backend-1.0.0.jar)</div>`;
+            }
+        }
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('uploadResult');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                resultDiv.innerHTML = '<div class="error">请先选择文件</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '上传中...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded * 100) / e.total);
+                        resultDiv.innerHTML = `上传进度: ${percent}%`;
+                    }
+                });
+
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.code === 200) {
+                            resultDiv.innerHTML = `<div class="result success">上传成功!<br>会议ID: ${data.data.meetingId}<br>状态: ${data.data.status}</div>`;
+                        } else {
+                            resultDiv.innerHTML = `<div class="result error">上传失败: ${data.message}</div>`;
+                        }
+                    } else {
+                        resultDiv.innerHTML = `<div class="result error">HTTP错误: ${xhr.status}<br>${xhr.responseText}</div>`;
+                    }
+                });
+
+                xhr.addEventListener('error', () => {
+                    resultDiv.innerHTML = '<div class="result error">网络错误</div>';
+                });
+
+                xhr.open('POST', `${API_BASE}/meeting/upload`);
+                xhr.send(formData);
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">错误: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

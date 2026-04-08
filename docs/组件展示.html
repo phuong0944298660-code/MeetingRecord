@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会议纪要应用 - 组件展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+            background: #F5F7FA;
+            color: #606266;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #409EFF 0%, #337ECC 100%);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #303133;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #EBEEF5;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .component-item {
+            border: 1px solid #EBEEF5;
+            border-radius: 8px;
+            padding: 20px;
+            background: #FAFAFA;
+        }
+
+        .component-label {
+            font-size: 13px;
+            color: #909399;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            outline: none;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #409EFF;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #66B1FF;
+        }
+
+        .btn-success {
+            background: #67C23A;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #F56C6C;
+            color: white;
+        }
+
+        .btn-default {
+            background: white;
+            color: #606266;
+            border: 1px solid #DCDFE6;
+        }
+
+        .btn-default:hover {
+            border-color: #409EFF;
+            color: #409EFF;
+        }
+
+        .btn-text {
+            background: transparent;
+            color: #409EFF;
+            padding: 10px;
+        }
+
+        .btn-text:hover {
+            background: #ECF5FF;
+        }
+
+        .btn-small {
+            padding: 7px 15px;
+            font-size: 12px;
+        }
+
+        .btn-large {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+
+        .btn-round {
+            border-radius: 20px;
+        }
+
+        /* 输入框样式 */
+        .input {
+            width: 100%;
+            height: 36px;
+            padding: 0 12px;
+            font-size: 14px;
+            border: 1px solid #DCDFE6;
+            border-radius: 4px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input:focus {
+            border-color: #409EFF;
+            box-shadow: 0 0 0 2px #ECF5FF;
+        }
+
+        .input::placeholder {
+            color: #C0C4CC;
+        }
+
+        .input-search {
+            padding-left: 36px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23C0C4CC' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            border: 1px solid #EBEEF5;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #303133;
+        }
+
+        /* Tab样式 */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #EBEEF5;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            font-size: 14px;
+            color: #606266;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #409EFF;
+        }
+
+        .tab.active {
+            color: #409EFF;
+            border-bottom-color: #409EFF;
+            font-weight: 500;
+        }
+
+        /* 标签样式 */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .tag-primary {
+            background: #ECF5FF;
+            color: #409EFF;
+        }
+
+        .tag-success {
+            background: #F0F9EB;
+            color: #67C23A;
+        }
+
+        .tag-warning {
+            background: #FDF6EC;
+            color: #E6A23C;
+        }
+
+        .tag-danger {
+            background: #FEF0F0;
+            color: #F56C6C;
+        }
+
+        /* 列表项样式 */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .list-item:hover {
+            background: #F5F7FA;
+        }
+
+        .list-item.active {
+            background: #ECF5FF;
+        }
+
+        .list-item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #409EFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-size: 14px;
+            color: #303133;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .list-item-meta {
+            font-size: 12px;
+            color: #909399;
+        }
+
+        /* 上传区域 */
+        .upload-area {
+            border: 2px dashed #DCDFE6;
+            border-radius: 8px;
+            padding: 48px;
+            text-align: center;
+            background: #FAFAFA;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #409EFF;
+            background: #F5F7FA;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #C0C4CC;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #606266;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: #909399;
+        }
+
+        /* 进度条 */
+        .progress {
+            width: 100%;
+            height: 6px;
+            background: #EBEEF5;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #409EFF;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid #EBEEF5;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #EBEEF5;
+        }
+
+        .sidebar-logo {
+            font-size: 18px;
+            font-weight: 600;
+            color: #409EFF;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-search {
+            padding: 16px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .sidebar-section-title {
+            font-size: 12px;
+            color: #909399;
+            padding: 8px 16px;
+            font-weight: 500;
+        }
+
+        /* 说话人样式 */
+        .speaker-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .speaker-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .speaker-content {
+            flex: 1;
+            background: #F5F7FA;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .speaker-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #303133;
+            margin-bottom: 8px;
+        }
+
+        .speaker-text {
+            font-size: 14px;
+            color: #606266;
+            line-height: 1.8;
+        }
+
+        .speaker-time {
+            font-size: 12px;
+            color: #C0C4CC;
+            margin-top: 8px;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            color: #C0C4CC;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 16px;
+            color: #303133;
+            margin-bottom: 8px;
+        }
+
+        .empty-desc {
+            font-size: 14px;
+            color: #909399;
+        }
+
+        /* 布局展示 */
+        .layout-preview {
+            display: flex;
+            height: 400px;
+            border: 1px solid #EBEEF5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .layout-sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid #EBEEF5;
+            padding: 20px;
+        }
+
+        .layout-main {
+            flex: 1;
+            background: #F5F7FA;
+            padding: 20px;
+        }
+
+        .mock-content {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            height: 100%;
+        }
+
+        /* 色彩展示 */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .color-item {
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .color-value {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .color-name {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* 复选框 */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #DCDFE6;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checkbox.checked {
+            background: #409EFF;
+            border-color: #409EFF;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: #606266;
+        }
+
+        .checkbox-wrapper:hover .checkbox {
+            border-color: #409EFF;
+        }
+
+        /* 分割线 */
+        .divider {
+            height: 1px;
+            background: #EBEEF5;
+            margin: 20px 0;
+        }
+
+        /* 状态指示 */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-processing { background: #E6A23C; }
+        .status-success { background: #67C23A; }
+        .status-error { background: #F56C6C; }
+
+        /* 统计卡片 */
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #EBEEF5;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #303133;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #909399;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎤 会议纪要应用 - 组件展示</h1>
+        <p>Vue 3 + Element Plus + Java + MySQL</p>
+    </div>
+
+    <div class="container">
+        <!-- 色彩系统 -->
+        <div class="section">
+            <h2 class="section-title">🎨 色彩系统</h2>
+            <div class="color-grid">
+                <div class="color-item" style="background: #409EFF; color: white;">
+                    <div class="color-value">#409EFF</div>
+                    <div class="color-name">主色 Primary</div>
+                </div>
+                <div class="color-item" style="background: #67C23A; color: white;">
+                    <div class="color-value">#67C23A</div>
+                    <div class="color-name">成功 Success</div>
+                </div>
+                <div class="color-item" style="background: #E6A23C; color: white;">
+                    <div class="color-value">#E6A23C</div>
+                    <div class="color-name">警告 Warning</div>
+                </div>
+                <div class="color-item" style="background: #F56C6C; color: white;">
+                    <div class="color-value">#F56C6C</div>
+                    <div class="color-name">危险 Danger</div>
+                </div>
+                <div class="color-item" style="background: #909399; color: white;">
+                    <div class="color-value">#909399</div>
+                    <div class="color-name">信息 Info</div>
+                </div>
+                <div class="color-item" style="background: #303133; color: white;">
+                    <div class="color-value">#303133</div>
+                    <div class="color-name">主要文字</div>
+                </div>
+                <div class="color-item" style="background: #606266; color: white;">
+                    <div class="color-value">#606266</div>
+                    <div class="color-name">常规文字</div>
+                </div>
+                <div class="color-item" style="background: #F5F7FA; color: #606266;">
+                    <div class="color-value">#F5F7FA</div>
+                    <div class="color-name">页面背景</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 按钮组件 -->
+        <div class="section">
+            <h2 class="section-title">🔘 按钮组件</h2>
+            <div class="component-grid">
+                <div class="component-item">
+                    <div class="component-label">主要按钮 (Primary)</div>
+                    <button class="btn btn-primary">上传录音</button>
+                    <button class="btn btn-primary" style="margin-left: 8px;">
+                        <span>📤</span> 带图标
+                    </button>
+                </div>
+                <div class="component-item">
+                    <div class="component-label">成功按钮 (Success)</div>
+                    <button class="btn btn-success">✓ 保存成功</button>
+                </div>
+                <div class="component-item">
+                    <div class="component-label">危险按钮 (Danger)</div>
+                    <button class="btn btn-danger">🗑️ 删除</button>
+                </div>
+                <div class="component-item">
+                    <div class="component-label">默认按钮 (Default)</div>
+                    <button class="btn btn-default">取消</button>
+                </div>
+                <div class="component-item">
+                    <div class="component-label">文字按钮 (Text)</div>
+                    <button class="btn btn-text">查看更多 →</button>
+                </div>
+                <div class="component-item">
+                    <div class="component-label">按钮尺寸</div>
+                    <button class="btn btn-primary btn-small">小按钮</button>
+                    <button class="btn btn-primary" style="margin: 0 8px;">默认</button>
+                    <button class="btn btn-primary btn-large">大按钮</button>
+                </div>
+                <div class="component-item">
+                    <div class="component-label">圆角按钮</div>
+                    <button class="btn btn-primary btn-round">圆角按钮</button>
+                    <button class="btn btn-success btn-round" style="margin-left: 8px;">+ 新建</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 输入组件 -->
+        <div class="section">
+            <h2 class="section-title">📝 输入组件</h2>
+            <div class="component-grid">
+                <div class="component-item">
+                    <div class="component-label">基础输入框</div>
+                    <input type="text" class="input" placeholder="请输入内容">
+                </div>
+                <div class="component-item">
+                    <div class="component-label">搜索框</div>
+                    <input type="text" class="input input-search" placeholder="搜索会议...">
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签组件 -->
+        <div class="section">
+            <h2 class="section-title">🏷️ 标签组件</h2>
+            <div class="component-grid">
+                <div class="component-item">
+                    <div class="component-label">标签样式</div>
+                    <span class="tag tag-primary">处理中</span>
+                    <span class="tag tag-success" style="margin-left: 8px;">已完成</span>
+                    <span class="tag tag-warning" style="margin-left: 8px;">待处理</span>
+                    <span class="tag tag-danger" style="margin-left: 8px;">失败</span>
+                </div>
+                <div class="component-item">
+                    <div class="component-label">状态指示</div>
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                        <span class="status-dot status-processing"></span> 处理中
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+                        <span class="status-dot status-success"></span> 完成
+                    </span>
+                    <span style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+                        <span class="status-dot status-error"></span> 失败
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab组件 -->
+        <div class="section">
+            <h2 class="section-title">📑 Tab 标签页</h2>
+            <div class="tabs">
+                <div class="tab active">会议纪要</div>
+                <div class="tab">逐字稿</div>
+            </div>
+            <div class="card">
+                <p>Tab内容区域 - 会议纪要概览</p>
+                <p style="color: #909399; font-size: 13px; margin-top: 8px;">点击Tab切换查看不同内容</p>
+            </div>
+        </div>
+
+        <!-- 卡片组件 -->
+        <div class="section">
+            <h2 class="section-title">🃏 卡片组件</h2>
+            <div class="component-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">会议信息</span>
+                        <span class="tag tag-success">已完成</span>
+                    </div>
+                    <div style="color: #606266; font-size: 14px;">
+                        <p style="margin-bottom: 8px;">⏱️ 时长: 45分钟</p>
+                        <p style="margin-bottom: 8px;">📅 时间: 2026-04-03</p>
+                        <p>👥 参与人数: 5人</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">待办事项</span>
+                    </div>
+                    <div class="checkbox-wrapper" style="margin-bottom: 10px;">
+                        <div class="checkbox checked">✓</div>
+                        <span class="checkbox-label" style="text-decoration: line-through; color: #909399;">完成需求文档</span>
+                    </div>
+                    <div class="checkbox-wrapper">
+                        <div class="checkbox"></div>
+                        <span class="checkbox-label">安排开发排期</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="section">
+            <h2 class="section-title">📂 侧边栏组件</h2>
+            <div class="sidebar" style="border: 1px solid #EBEEF5;">
+                <div class="sidebar-header">
+                    <div class="sidebar-logo">
+                        <span>🎤</span>
+                        <span>会议纪要</span>
+                    </div>
+                </div>
+                <div class="sidebar-search">
+                    <input type="text" class="input input-search" placeholder="搜索会议...">
+                </div>
+                <div class="sidebar-section-title">📋 会议记录</div>
+                <div class="sidebar-content">
+                    <div class="list-item active">
+                        <div class="list-item-icon">📄</div>
+                        <div class="list-item-content">
+                            <div class="list-item-title">产品周会</div>
+                            <div class="list-item-meta">04-03 14:00 • 45分钟</div>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-item-icon" style="background: #67C23A;">📄</div>
+                        <div class="list-item-content">
+                            <div class="list-item-title">技术评审</div>
+                            <div class="list-item-meta">04-02 10:00 • 60分钟</div>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-item-icon" style="background: #E6A23C;">📄</div>
+                        <div class="list-item-content">
+                            <div class="list-item-title">项目启动会</div>
+                            <div class="list-item-meta">04-01 09:30 • 30分钟</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 上传组件 -->
+        <div class="section">
+            <h2 class="section-title">📤 上传组件</h2>
+            <div class="upload-area">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">拖拽文件到此处上传</div>
+                <div class="upload-hint">支持 MP3, WAV, M4A, AAC 格式，最大500MB</div>
+            </div>
+            <div style="margin-top: 20px;">
+                <div class="component-label">上传进度</div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="progress" style="flex: 1;">
+                        <div class="progress-bar" style="width: 65%;"></div>
+                    </div>
+                    <span style="font-size: 13px; color: #909399;">65%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 说话人展示 -->
+        <div class="section">
+            <h2 class="section-title">👤 说话人展示</h2>
+            <div class="speaker-item">
+                <div class="speaker-avatar" style="background: #409EFF;">A</div>
+                <div class="speaker-content">
+                    <div class="speaker-name">说话人 A</div>
+                    <div class="speaker-text">我觉得这个方案可行，我们需要在下周五之前完成第一版的开发工作，然后安排测试。</div>
+                    <div class="speaker-time">00:05:23</div>
+                </div>
+            </div>
+            <div class="speaker-item">
+                <div class="speaker-avatar" style="background: #67C23A;">B</div>
+                <div class="speaker-content">
+                    <div class="speaker-name">说话人 B</div>
+                    <div class="speaker-text">同意，我会负责后端接口的开发，预计需要3天时间。前端部分需要谁来对接？</div>
+                    <div class="speaker-time">00:06:15</div>
+                </div>
+            </div>
+            <div class="speaker-item">
+                <div class="speaker-avatar" style="background: #E6A23C;">C</div>
+                <div class="speaker-content">
+                    <div class="speaker-name">说话人 C</div>
+                    <div class="speaker-text">前端我来负责，下周一可以开始。</div>
+                    <div class="speaker-time">00:06:45</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="section">
+            <h2 class="section-title">📊 统计卡片</h2>
+            <div class="component-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #ECF5FF; color: #409EFF;">📄</div>
+                    <div>
+                        <div class="stat-value">128</div>
+                        <div class="stat-label">会议记录</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #F0F9EB; color: #67C23A;">⏱️</div>
+                    <div>
+                        <div class="stat-value">256h</div>
+                        <div class="stat-label">会议时长</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #FDF6EC; color: #E6A23C;">✓</div>
+                    <div>
+                        <div class="stat-value">86%</div>
+                        <div class="stat-label">待办完成率</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="section">
+            <h2 class="section-title">🕳️ 空状态</h2>
+            <div class="component-grid">
+                <div class="component-item">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">暂无会议记录</div>
+                        <div class="empty-desc">点击上传开始你的第一个会议</div>
+                        <button class="btn btn-primary" style="margin-top: 16px;">上传录音</button>
+                    </div>
+                </div>
+                <div class="component-item">
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-title">未找到相关内容</div>
+                        <div class="empty-desc">试试其他关键词</div>
+                    </div>
+                </div>
+                <div class="component-item">
+                    <div class="empty-state">
+                        <div class="empty-icon">⏳</div>
+                        <div class="empty-title">正在处理中</div>
+                        <div class="empty-desc">预计还需5分钟，请耐心等待</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 整体布局 -->
+        <div class="section">
+            <h2 class="section-title">🖥️ 整体布局</h2>
+            <div class="layout-preview">
+                <div class="layout-sidebar">
+                    <div style="font-size: 18px; font-weight: 600; color: #409EFF; margin-bottom: 20px;">
+                        🎤 会议纪要
+                    </div>
+                    <div style="background: #F5F7FA; padding: 10px; border-radius: 4px; margin-bottom: 20px; color: #C0C4CC; font-size: 13px;">
+                        🔍 搜索会议...
+                    </div>
+                    <div style="font-size: 12px; color: #909399; margin-bottom: 12px;">📋 会议记录</div>
+                    <div style="background: #ECF5FF; padding: 12px; border-radius: 4px; margin-bottom: 8px;">
+                        <div style="font-size: 14px; color: #303133; font-weight: 500;">产品周会</div>
+                        <div style="font-size: 12px; color: #909399; margin-top: 4px;">04-03 14:00</div>
+                    </div>
+                    <div style="padding: 12px; margin-bottom: 8px;">
+                        <div style="font-size: 14px; color: #606266;">技术评审</div>
+                        <div style="font-size: 12px; color: #C0C4CC; margin-top: 4px;">04-02 10:00</div>
+                    </div>
+                </div>
+                <div class="layout-main">
+                    <div class="mock-content">
+                        <div class="tabs" style="margin-bottom: 20px;">
+                            <div class="tab active">会议纪要</div>
+                            <div class="tab">逐字稿</div>
+                        </div>
+                        <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+                            <div class="stat-card" style="flex: 1;">
+                                <div class="stat-icon" style="background: #ECF5FF; color: #409EFF;">⏱️</div>
+                                <div>
+                                    <div class="stat-value">45分钟</div>
+                                    <div class="stat-label">会议时长</div>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="flex: 1;">
+                                <div class="stat-icon" style="background: #F0F9EB; color: #67C23A;">👤</div>
+                                <div>
+                                    <div class="stat-value">5人</div>
+                                    <div class="stat-label">参与人数</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-title" style="margin-bottom: 12px;">📋 会议摘要</div>
+                            <p style="color: #606266; font-size: 14px; line-height: 1.8;">
+                                本次会议讨论了Q2产品规划，确定了主要功能模块和上线时间节点。
+                                各负责人明确了分工，预计下周五完成第一版开发。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 确认按钮 -->
+        <div class="section" style="text-align: center;">
+            <h2 class="section-title">✅ 组件确认</h2>
+            <p style="margin-bottom: 24px; color: #606266;">请确认以上组件是否符合您的设计需求</p>
+            <div>
+                <button class="btn btn-primary btn-large" onclick="alert('组件已确认！')">确认设计</button>
+                <button class="btn btn-default btn-large" style="margin-left: 16px;" onclick="alert('请记录需要修改的地方')">需要调整</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

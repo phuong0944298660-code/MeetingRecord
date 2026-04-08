@@ -1,0 +1,13 @@
+# Whisper 语音识别
+openai-whisper
+
+# 说话人分离 (可选，安装失败时会回退到简单方案)
+pyannote.audio
+
+# 音频处理
+librosa
+numpy
+
+# PyTorch (Whisper 依赖)
+torch
+torchaudio

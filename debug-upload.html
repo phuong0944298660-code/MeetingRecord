@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Upload</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        button { padding: 10px 20px; cursor: pointer; }
+        #fileInput { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>会议上传调试工具</h1>
+
+    <div class="section">
+        <h2>1. 测试后端连接</h2>
+        <button onclick="testBackend()">测试 /api/meeting/list</button>
+        <div id="backendResult"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. 测试文件上传</h2>
+        <input type="file" id="fileInput" accept="audio/*">
+        <button onclick="testUpload()">上传测试</button>
+        <div id="uploadResult"></div>
+    </div>
+
+    <div class="section">
+        <h2>3. 日志</h2>
+        <pre id="log"></pre>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+
+        function log(msg) {
+            const logEl = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            logEl.textContent += `[${time}] ${msg}\n`;
+            console.log(`[${time}]`, msg);
+        }
+
+        async function testBackend() {
+            const resultDiv = document.getElementById('backendResult');
+            resultDiv.innerHTML = '测试中...';
+            log('Testing backend connection...');
+
+            try {
+                const response = await fetch(`${API_BASE}/meeting/list`);
+                const text = await response.text();
+                log(`Backend response status: ${response.status}`);
+                log(`Backend response: ${text.substring(0, 500)}`);
+
+                if (response.ok) {
+                    resultDiv.innerHTML = '<div class="success">后端连接正常</div>';
+                } else {
+                    resultDiv.innerHTML = `<div class="error">后端错误: HTTP ${response.status}<br><pre>${text}</pre></div>`;
+                }
+            } catch (error) {
+                log(`Backend error: ${error.message}`);
+                resultDiv.innerHTML = `<div class="error">连接失败: ${error.message}</div>`;
+            }
+        }
+
+        async function testUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('uploadResult');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                resultDiv.innerHTML = '<div class="error">请选择文件</div>';
+                return;
+            }
+
+            log(`Starting upload: ${file.name} (${file.size} bytes)`);
+            resultDiv.innerHTML = '上传中...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const startTime = Date.now();
+                const response = await fetch(`${API_BASE}/meeting/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const duration = Date.now() - startTime;
+                const text = await response.text();
+
+                log(`Upload response status: ${response.status} (${duration}ms)`);
+                log(`Upload response: ${text.substring(0, 1000)}`);
+
+                if (response.ok) {
+                    const data = JSON.parse(text);
+                    resultDiv.innerHTML = `<div class="success">上传成功!<br>会议ID: ${data.data?.meetingId}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">上传失败: HTTP ${response.status}<br><pre>${text}</pre></div>`;
+                }
+            } catch (error) {
+                log(`Upload error: ${error.message}`);
+                resultDiv.innerHTML = `<div class="error">上传错误: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            log('Page loaded');
+            testBackend();
+        };
+    </script>
+</body>
+</html>
